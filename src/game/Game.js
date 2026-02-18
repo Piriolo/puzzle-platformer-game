@@ -2,6 +2,7 @@
  * Escena principal del juego - Versión mejorada con personaje animado
  */
 
+import Phaser from 'phaser';
 import Player from '../player/Player.js';
 import LevelManager from '../levels/LevelManager.js';
 import AchievementManager from '../achievements/AchievementManager.js';
@@ -29,49 +30,47 @@ class Game extends Phaser.Scene {
   
   preload() {
     console.log('⏳ Cargando recursos...');
-    
-    // Como no tenemos sprites externos, crearemos gráficos procedurales
-    // En una versión completa cargarías sprites reales aquí
-    
-    this.load.on('complete', () => {
-      console.log('✅ Recursos cargados');
-    });
+    console.log('✅ Recursos cargados');
   }
   
   create() {
     console.log('🎨 Creando escena del juego...');
     
-    // Crear gráficos procedurales
-    this.createProceduralGraphics();
-    
-    // Crear mundo del juego
-    this.createWorld();
-    
-    // Crear sistema de partículas
-    this.createParticleSystem();
-    
-    // Crear jugador animado
-    this.player = new Player(this, 100, 450);
-    this.createAnimatedPlayer();
-    
-    // Cargar primer nivel
-    this.loadLevel(1);
-    
-    // Crear UI mejorada
-    this.createEnhancedUI();
-    
-    // Configurar controles
-    this.setupControls();
-    
-    // Inicializar managers
-    this.adManager.initialize('demo');
-    this.iapManager.initialize('demo');
-    
-    // Efectos de fondo
-    this.createBackgroundEffects();
-    
-    console.log('✅ Juego listo para jugar!');
-    console.log('📋 Controles: ← → para mover, ↑ para saltar, ESC para pausar');
+    try {
+      // Crear gráficos procedurales
+      this.createProceduralGraphics();
+      
+      // Crear mundo del juego
+      this.createWorld();
+      
+      // Crear sistema de partículas
+      this.createParticleSystem();
+      
+      // Crear jugador animado
+      this.player = new Player(this, 100, 450);
+      this.createAnimatedPlayer();
+      
+      // Cargar primer nivel
+      this.loadLevel(1);
+      
+      // Crear UI mejorada
+      this.createEnhancedUI();
+      
+      // Configurar controles
+      this.setupControls();
+      
+      // Inicializar managers
+      this.adManager.initialize('demo');
+      this.iapManager.initialize('demo');
+      
+      // Efectos de fondo
+      this.createBackgroundEffects();
+      
+      console.log('✅ Juego listo para jugar!');
+      console.log('📋 Controles: ← → para mover, ↑ para saltar, ESC para pausar');
+    } catch (error) {
+      console.error('❌ Error al crear el juego:', error);
+    }
   }
   
   createProceduralGraphics() {
@@ -100,12 +99,12 @@ class Game extends Phaser.Scene {
     
     // Brazos
     playerGraphics.fillStyle(0x4ECDC4, 1);
-    playerGraphics.fillRoundedRect(-25, -5, 8, 20, 4); // Brazo izquierdo
-    playerGraphics.fillRoundedRect(17, -5, 8, 20, 4); // Brazo derecho
+    playerGraphics.fillRoundedRect(-25, -5, 8, 20, 4);
+    playerGraphics.fillRoundedRect(17, -5, 8, 20, 4);
     
     // Piernas
-    playerGraphics.fillRoundedRect(-15, 20, 10, 8, 4); // Pierna izquierda
-    playerGraphics.fillRoundedRect(5, 20, 10, 8, 4); // Pierna derecha
+    playerGraphics.fillRoundedRect(-15, 20, 10, 8, 4);
+    playerGraphics.fillRoundedRect(5, 20, 10, 8, 4);
     
     playerGraphics.generateTexture('player_idle', 50, 60);
     playerGraphics.destroy();
@@ -120,22 +119,19 @@ class Game extends Phaser.Scene {
     playerJumpGraphics.fillStyle(0x000000, 1);
     playerJumpGraphics.fillCircle(-10, -14, 3);
     playerJumpGraphics.fillCircle(10, -14, 3);
-    // Boca sorprendida
     playerJumpGraphics.fillCircle(0, 2, 5);
-    // Brazos hacia arriba
     playerJumpGraphics.fillRoundedRect(-25, -20, 8, 20, 4);
     playerJumpGraphics.fillRoundedRect(17, -20, 8, 20, 4);
-    // Piernas juntas
     playerJumpGraphics.fillRoundedRect(-10, 20, 20, 8, 4);
     playerJumpGraphics.generateTexture('player_jump', 50, 60);
     playerJumpGraphics.destroy();
     
-    // Crear sprites de coleccionables mejorados
+    // Crear sprites de coleccionables
     this.createCollectibleGraphics();
   }
   
   createCollectibleGraphics() {
-    // Moneda animada
+    // Moneda
     const coinGraphics = this.add.graphics();
     coinGraphics.fillStyle(0xFFD700, 1);
     coinGraphics.fillCircle(12, 12, 10);
@@ -146,7 +142,7 @@ class Game extends Phaser.Scene {
     coinGraphics.generateTexture('coin', 24, 24);
     coinGraphics.destroy();
     
-    // Estrella brillante
+    // Estrella
     const starGraphics = this.add.graphics();
     starGraphics.fillStyle(0xFFFF00, 1);
     const points = [];
@@ -162,7 +158,7 @@ class Game extends Phaser.Scene {
     starGraphics.generateTexture('star', 36, 36);
     starGraphics.destroy();
     
-    // Gema preciosa
+    // Gema
     const gemGraphics = this.add.graphics();
     gemGraphics.fillStyle(0xFF00FF, 1);
     gemGraphics.beginPath();
@@ -179,15 +175,15 @@ class Game extends Phaser.Scene {
   }
   
   createWorld() {
-    // Cielo con nubes
+    // Cielo
     const sky = this.add.graphics();
     sky.fillGradientStyle(0x87CEEB, 0x87CEEB, 0xE0F6FF, 0xE0F6FF, 1);
     sky.fillRect(0, 0, 800, 600);
     
-    // Nubes decorativas
+    // Nubes
     this.createClouds();
     
-    // Plataforma base con textura
+    // Plataforma base
     this.platforms = this.physics.add.staticGroup();
     const groundGraphics = this.add.graphics();
     groundGraphics.fillStyle(0x8B4513, 1);
@@ -224,37 +220,31 @@ class Game extends Phaser.Scene {
   }
   
   createParticleSystem() {
-    // Sistema de partículas para efectos
-    this.particlesGraphics = this.add.graphics();
-    this.particlesGraphics.fillStyle(0xFFFFFF, 1);
-    this.particlesGraphics.fillCircle(4, 4, 4);
-    this.particlesGraphics.generateTexture('particle', 8, 8);
-    this.particlesGraphics.destroy();
+    const particlesGraphics = this.add.graphics();
+    particlesGraphics.fillStyle(0xFFFFFF, 1);
+    particlesGraphics.fillCircle(4, 4, 4);
+    particlesGraphics.generateTexture('particle', 8, 8);
+    particlesGraphics.destroy();
     
     this.particles = this.add.particles('particle');
   }
   
   createAnimatedPlayer() {
-    // Crear sprite del jugador con animaciones
     this.playerSprite = this.add.sprite(100, 450, 'player_idle');
     this.playerSprite.setScale(1);
     
-    // Añadir física
     this.physics.add.existing(this.playerSprite);
     this.playerSprite.body.setCollideWorldBounds(true);
     this.playerSprite.body.setSize(40, 50);
     this.playerSprite.body.setBounce(0.1);
     
-    // Colisión con plataformas
     this.physics.add.collider(this.playerSprite, this.platforms);
     
-    // Estado del jugador
     this.playerSprite.isJumping = false;
     this.playerSprite.facingRight = true;
   }
   
   createBackgroundEffects() {
-    // Estrellas de fondo parpadeantes
     this.backgroundStars = [];
     for (let i = 0; i < 20; i++) {
       const star = this.add.circle(
@@ -283,7 +273,6 @@ class Game extends Phaser.Scene {
     this.currentLevel = this.levelManager.loadLevel(levelNumber);
     this.levelStartTime = Date.now();
     
-    // Limpiar elementos anteriores
     if (this.collectiblesGroup) {
       this.collectiblesGroup.clear(true, true);
     }
@@ -291,17 +280,12 @@ class Game extends Phaser.Scene {
       this.platformsGroup.clear(true, true);
     }
     
-    // Crear grupos
     this.collectiblesGroup = this.physics.add.group();
     this.platformsGroup = this.physics.add.staticGroup();
     
-    // Generar plataformas
     this.createPlatforms();
-    
-    // Generar coleccionables
     this.createCollectibles();
     
-    // Setup colisiones
     this.physics.add.overlap(
       this.playerSprite,
       this.collectiblesGroup,
@@ -316,17 +300,15 @@ class Game extends Phaser.Scene {
   createPlatforms() {
     const platforms = this.currentLevel.platforms;
     
-    platforms.forEach(platform => {
+    platforms.forEach((platform, index) => {
       const graphics = this.add.graphics();
       const color = this.getPlatformColor(platform.type);
       
-      // Dibujar plataforma con borde
       graphics.fillStyle(color, 1);
       graphics.fillRoundedRect(0, 0, platform.width, 20, 5);
       graphics.lineStyle(2, this.darkenColor(color), 1);
       graphics.strokeRoundedRect(0, 0, platform.width, 20, 5);
       
-      // Añadir detalles según tipo
       if (platform.type === 'ice') {
         graphics.fillStyle(0xFFFFFF, 0.5);
         graphics.fillCircle(10, 5, 3);
@@ -334,15 +316,14 @@ class Game extends Phaser.Scene {
         graphics.fillCircle(40, 6, 3);
       }
       
-      graphics.generateTexture(`platform_${platform.type}_${platforms.indexOf(platform)}`, platform.width, 20);
+      graphics.generateTexture(`platform_${platform.type}_${index}`, platform.width, 20);
       graphics.destroy();
       
-      const plat = this.add.image(platform.x, platform.y, `platform_${platform.type}_${platforms.indexOf(platform)}`);
+      const plat = this.add.image(platform.x, platform.y, `platform_${platform.type}_${index}`);
       this.physics.add.existing(plat, true);
       this.platformsGroup.add(plat);
     });
     
-    // Colisión jugador con plataformas
     this.physics.add.collider(this.playerSprite, this.platformsGroup);
   }
   
@@ -371,7 +352,6 @@ class Game extends Phaser.Scene {
       const sprite = this.add.sprite(item.x, item.y, item.type);
       sprite.setData('type', item.type);
       
-      // Animación flotante
       this.tweens.add({
         targets: sprite,
         y: sprite.y - 10,
@@ -381,7 +361,6 @@ class Game extends Phaser.Scene {
         ease: 'Sine.easeInOut'
       });
       
-      // Rotación para monedas
       if (item.type === 'coin') {
         this.tweens.add({
           targets: sprite,
@@ -391,7 +370,6 @@ class Game extends Phaser.Scene {
         });
       }
       
-      // Pulso para estrellas
       if (item.type === 'star') {
         this.tweens.add({
           targets: sprite,
@@ -409,14 +387,11 @@ class Game extends Phaser.Scene {
   collectItem(playerSprite, itemSprite) {
     const itemType = itemSprite.getData('type');
     
-    // Recolectar en el player
     this.player.collect(itemType);
     
-    // Actualizar score
     const points = { coin: 10, star: 50, gem: 100 };
     this.score += points[itemType] || 0;
     
-    // Efecto de partículas
     const emitter = this.particles.createEmitter({
       x: itemSprite.x,
       y: itemSprite.y,
@@ -431,7 +406,6 @@ class Game extends Phaser.Scene {
     
     emitter.explode();
     
-    // Efecto visual mejorado
     this.tweens.add({
       targets: itemSprite,
       alpha: 0,
@@ -445,7 +419,6 @@ class Game extends Phaser.Scene {
       }
     });
     
-    // Texto flotante
     const pointsText = this.add.text(itemSprite.x, itemSprite.y, `+${points[itemType]}`, {
       fontSize: '24px',
       fill: '#FFD700',
@@ -463,32 +436,19 @@ class Game extends Phaser.Scene {
       onComplete: () => pointsText.destroy()
     });
     
-    // Sonido (simulado en consola)
-    console.log(`🔔 *${itemType} sound*`);
-    
-    // Actualizar UI
     this.updateUI();
-    
-    // Verificar logros
     this.checkLevelProgress();
     
     console.log(`✨ Recolectado: ${itemType} (+${points[itemType]} puntos)`);
   }
   
   createEnhancedUI() {
-    // Panel superior con fondo
     const uiPanel = this.add.graphics();
     uiPanel.fillStyle(0x000000, 0.5);
     uiPanel.fillRoundedRect(10, 10, 780, 80, 10);
     uiPanel.setScrollFactor(0);
     uiPanel.setDepth(100);
     
-    // Contenedor de UI
-    this.uiContainer = this.add.container(0, 0);
-    this.uiContainer.setScrollFactor(0);
-    this.uiContainer.setDepth(101);
-    
-    // Score con icono
     this.add.text(30, 25, '🪙', { fontSize: '32px' });
     this.scoreText = this.add.text(70, 30, '', {
       fontSize: '24px',
@@ -498,7 +458,6 @@ class Game extends Phaser.Scene {
       strokeThickness: 3
     });
     
-    // Vidas con iconos
     this.add.text(30, 60, '❤️', { fontSize: '28px' });
     this.livesText = this.add.text(70, 65, '', {
       fontSize: '20px',
@@ -506,7 +465,6 @@ class Game extends Phaser.Scene {
       fontStyle: 'bold'
     });
     
-    // Nivel
     this.levelText = this.add.text(400, 30, '', {
       fontSize: '28px',
       fill: '#FFFFFF',
@@ -515,35 +473,29 @@ class Game extends Phaser.Scene {
       strokeThickness: 4
     }).setOrigin(0.5, 0);
     
-    // Tiempo
     this.timeText = this.add.text(400, 65, '', {
       fontSize: '20px',
       fill: '#FFFFFF'
     }).setOrigin(0.5, 0);
     
-    // Coleccionables restantes
     this.collectiblesText = this.add.text(700, 30, '', {
       fontSize: '20px',
       fill: '#FFFFFF'
     }).setOrigin(1, 0);
     
-    // Barra de progreso del nivel
     this.progressBarBg = this.add.graphics();
     this.progressBarBg.fillStyle(0x333333, 1);
     this.progressBarBg.fillRoundedRect(250, 78, 300, 8, 4);
     
     this.progressBar = this.add.graphics();
     
-    // Instrucciones al inicio
     this.instructionsText = this.add.text(400, 550, '← → Mover  |  ↑ Saltar  |  ESC Pausa  |  R Reiniciar', {
       fontSize: '16px',
       fill: '#333333',
       backgroundColor: '#FFFFFF',
-      padding: { x: 12, y: 6 },
-      borderRadius: 5
+      padding: { x: 12, y: 6 }
     }).setOrigin(0.5, 0.5).setDepth(100);
     
-    // Hacer desaparecer las instrucciones después de 5 segundos
     this.time.delayedCall(5000, () => {
       this.tweens.add({
         targets: this.instructionsText,
@@ -561,17 +513,14 @@ class Game extends Phaser.Scene {
     this.livesText.setText(`x${this.player.lives}`);
     this.levelText.setText(`Nivel ${this.levelManager.currentLevel}`);
     
-    // Actualizar tiempo
     const elapsed = Math.floor((Date.now() - this.levelStartTime) / 1000);
     const minutes = Math.floor(elapsed / 60);
     const seconds = elapsed % 60;
     this.timeText.setText(`⏱️ ${minutes}:${seconds.toString().padStart(2, '0')}`);
     
-    // Actualizar coleccionables restantes
     const remaining = this.collectiblesGroup.getChildren().length;
     this.collectiblesText.setText(`⭐ ${remaining}`);
     
-    // Actualizar barra de progreso
     const total = this.currentLevel.collectibles.length;
     const collected = total - remaining;
     const progress = collected / total;
@@ -593,24 +542,17 @@ class Game extends Phaser.Scene {
       R: Phaser.Input.Keyboard.KeyCodes.R
     });
     
-    // Pausar con ESC
     this.keys.ESC.on('down', () => this.togglePause());
-    
-    // Reiniciar con R
     this.keys.R.on('down', () => this.restartLevel());
   }
   
   update() {
     if (this.isPaused) return;
     
-    // Actualizar nubes
     this.clouds.forEach(cloud => {
       cloud.x += cloud.speed;
       if (cloud.x > 850) cloud.x = -50;
     });
-    
-    // Movimiento del jugador con animación
-    const velocity = this.playerSprite.body.velocity;
     
     if (this.cursors.left.isDown || this.keys.A.isDown) {
       this.playerSprite.body.setVelocityX(-250);
@@ -628,13 +570,11 @@ class Game extends Phaser.Scene {
       this.playerSprite.body.setVelocityX(0);
     }
     
-    // Salto con animación
     if ((this.cursors.up.isDown || this.keys.W.isDown || this.keys.SPACE.isDown) && this.playerSprite.body.touching.down) {
       this.playerSprite.body.setVelocityY(-450);
       this.playerSprite.setTexture('player_jump');
       this.playerSprite.isJumping = true;
       
-      // Partículas de salto
       const jumpEmitter = this.particles.createEmitter({
         x: this.playerSprite.x,
         y: this.playerSprite.y + 25,
@@ -647,23 +587,19 @@ class Game extends Phaser.Scene {
       jumpEmitter.explode();
     }
     
-    // Volver a sprite normal al tocar el suelo
     if (this.playerSprite.body.touching.down && this.playerSprite.isJumping) {
       this.playerSprite.setTexture('player_idle');
       this.playerSprite.isJumping = false;
     }
     
-    // Inclinación durante el movimiento
+    const velocity = this.playerSprite.body.velocity;
     if (Math.abs(velocity.x) > 50) {
       this.playerSprite.angle = Phaser.Math.Clamp(velocity.x * 0.05, -10, 10);
     } else {
       this.playerSprite.angle = 0;
     }
     
-    // Actualizar UI
     this.updateUI();
-    
-    // Verificar si completó el nivel
     this.checkLevelCompletion();
   }
   
@@ -683,23 +619,13 @@ class Game extends Phaser.Scene {
     console.log('🎉 ¡Nivel completado!');
     
     const levelTime = Math.floor((Date.now() - this.levelStartTime) / 1000);
-    
-    const stats = {
-      coins: this.player.coins,
-      time: levelTime
-    };
-    
-    const result = this.levelManager.completeLevel(
-      this.levelManager.currentLevel,
-      stats
-    );
+    const stats = { coins: this.player.coins, time: levelTime };
+    const result = this.levelManager.completeLevel(this.levelManager.currentLevel, stats);
     
     console.log(`⭐ Estrellas obtenidas: ${result.stars}/3`);
     
-    // Mostrar pantalla de victoria
     this.showVictoryScreen(result.stars, levelTime);
     
-    // Actualizar logros
     this.achievementManager.updateProgress('level_complete', this.levelManager.currentLevel);
     this.achievementManager.updateProgress('levels_completed', this.levelManager.levelsCompleted.length);
     
@@ -711,7 +637,6 @@ class Game extends Phaser.Scene {
       this.achievementManager.updateProgress('level_time_under', levelTime);
     }
     
-    // Mostrar anuncio si corresponde
     this.adManager.onLevelComplete();
     if (this.adManager.shouldShowAd()) {
       console.log('📺 Mostrando anuncio...');
@@ -720,13 +645,11 @@ class Game extends Phaser.Scene {
   }
   
   showVictoryScreen(stars, time) {
-    // Fondo semi-transparente
     const overlay = this.add.graphics();
     overlay.fillStyle(0x000000, 0.7);
     overlay.fillRect(0, 0, 800, 600);
     overlay.setDepth(200);
     
-    // Panel de victoria
     const panel = this.add.graphics();
     panel.fillStyle(0xFFFFFF, 1);
     panel.fillRoundedRect(200, 150, 400, 300, 20);
@@ -734,14 +657,12 @@ class Game extends Phaser.Scene {
     panel.strokeRoundedRect(200, 150, 400, 300, 20);
     panel.setDepth(201);
     
-    // Título
     const title = this.add.text(400, 200, '¡NIVEL COMPLETADO!', {
       fontSize: '32px',
       fill: '#4ECDC4',
       fontStyle: 'bold'
     }).setOrigin(0.5).setDepth(202);
     
-    // Estrellas
     const starsContainer = this.add.container(400, 270).setDepth(202);
     for (let i = 0; i < 3; i++) {
       const starSprite = this.add.sprite((i - 1) * 60, 0, 'star');
@@ -759,7 +680,6 @@ class Game extends Phaser.Scene {
       starsContainer.add(starSprite);
     }
     
-    // Estadísticas
     const statsText = this.add.text(400, 340, [
       `Tiempo: ${Math.floor(time / 60)}:${(time % 60).toString().padStart(2, '0')}`,
       `Puntuación: ${this.score}`,
@@ -771,13 +691,11 @@ class Game extends Phaser.Scene {
       lineSpacing: 10
     }).setOrigin(0.5).setDepth(202);
     
-    // Botón continuar
     const button = this.add.text(400, 410, 'CONTINUAR', {
       fontSize: '24px',
       fill: '#FFFFFF',
       backgroundColor: '#4ECDC4',
-      padding: { x: 30, y: 10 },
-      borderRadius: 10
+      padding: { x: 30, y: 10 }
     }).setOrigin(0.5).setDepth(202).setInteractive();
     
     button.on('pointerover', () => button.setScale(1.1));
@@ -818,7 +736,6 @@ class Game extends Phaser.Scene {
       console.log('⏸️ Juego pausado');
       this.physics.pause();
       
-      // Panel de pausa
       this.pauseOverlay = this.add.graphics();
       this.pauseOverlay.fillStyle(0x000000, 0.7);
       this.pauseOverlay.fillRect(0, 0, 800, 600);
@@ -847,11 +764,7 @@ class Game extends Phaser.Scene {
   }
   
   showReviveOptions() {
-    console.log('💀 Game Over - Opciones de revivir disponibles');
-    console.log('1. Ver anuncio para continuar');
-    console.log('2. Usar vida extra (IAP)');
-    console.log('3. Reiniciar nivel');
-    
+    console.log('💀 Game Over');
     this.restartLevel();
   }
 }

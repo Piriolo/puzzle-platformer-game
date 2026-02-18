@@ -2,8 +2,9 @@
  * Punto de entrada principal del juego
  */
 
-import GameConfig from './game/GameConfig.js';
+import Phaser from 'phaser';
 import Game from './game/Game.js';
+import GameConfig from './game/GameConfig.js';
 
 // Esperar a que el DOM esté listo
 window.addEventListener('DOMContentLoaded', () => {
