@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Puzzle Platformer Game - Demo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 20px;
+    }
+    
+    .header h1 {
+      font-size: 2.5em;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      margin-bottom: 10px;
+    }
+    
+    .header p {
+      font-size: 1.2em;
+      opacity: 0.9;
+    }
+    
+    #game-container {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+    
+    .footer {
+      margin-top: 20px;
+      text-align: center;
+      color: white;
+    }
+    
+    .controls {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 10px;
+      padding: 15px 30px;
+      margin-top: 15px;
+    }
+    
+    .controls h3 {
+      margin-bottom: 10px;
+      font-size: 1.2em;
+    }
+    
+    .controls ul {
+      list-style: none;
+      text-align: left;
+    }
+    
+    .controls li {
+      margin: 5px 0;
+      font-size: 0.95em;
+    }
+    
+    .key {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: bold;
+      margin-right: 5px;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 50px;
+      color: white;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .spinner {
+      border: 4px solid rgba(255,255,255,0.3);
+      border-top: 4px solid white;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🎮 Puzzle Platformer Game</h1>
+    <p>Versión Demo - Audiencia Infantil</p>
+  </div>
+  
+  <div id="game-container">
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Cargando juego...</p>
+    </div>
+  </div>
+  
+  <div class="footer">
+    <div class="controls">
+      <h3>🎯 Controles</h3>
+      <ul>
+        <li><span class="key">← →</span> o <span class="key">A D</span> - Mover</li>
+        <li><span class="key">↑</span> o <span class="key">W</span> o <span class="key">Espacio</span> - Saltar</li>
+        <li><span class="key">ESC</span> - Pausar/Reanudar</li>
+        <li><span class="key">R</span> - Reiniciar nivel</li>
+      </ul>
+    </div>
+    <p style="margin-top: 15px; opacity: 0.8;">Recolecta monedas 🪙, estrellas ⭐ y gemas 💎</p>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.0/dist/phaser.js"></script>
+  <script src="bundle.js"></script>
+</body>
+</html>
