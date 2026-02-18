@@ -23,9 +23,6 @@ class Game extends Phaser.Scene {
     this.score = 0;
     this.levelStartTime = 0;
     this.isPaused = false;
-    
-    // Particles
-    this.particles = null;
   }
   
   preload() {
@@ -42,9 +39,6 @@ class Game extends Phaser.Scene {
       
       // Crear mundo del juego
       this.createWorld();
-      
-      // Crear sistema de partículas
-      this.createParticleSystem();
       
       // Crear jugador animado
       this.player = new Player(this, 100, 450);
@@ -125,6 +119,13 @@ class Game extends Phaser.Scene {
     playerJumpGraphics.fillRoundedRect(-10, 20, 20, 8, 4);
     playerJumpGraphics.generateTexture('player_jump', 50, 60);
     playerJumpGraphics.destroy();
+    
+    // Crear texture para partículas
+    const particleGraphics = this.add.graphics();
+    particleGraphics.fillStyle(0xFFFFFF, 1);
+    particleGraphics.fillCircle(4, 4, 4);
+    particleGraphics.generateTexture('particle', 8, 8);
+    particleGraphics.destroy();
     
     // Crear sprites de coleccionables
     this.createCollectibleGraphics();
@@ -217,16 +218,6 @@ class Game extends Phaser.Scene {
       
       this.clouds.push(cloud);
     }
-  }
-  
-  createParticleSystem() {
-    const particlesGraphics = this.add.graphics();
-    particlesGraphics.fillStyle(0xFFFFFF, 1);
-    particlesGraphics.fillCircle(4, 4, 4);
-    particlesGraphics.generateTexture('particle', 8, 8);
-    particlesGraphics.destroy();
-    
-    this.particles = this.add.particles('particle');
   }
   
   createAnimatedPlayer() {
@@ -392,9 +383,8 @@ class Game extends Phaser.Scene {
     const points = { coin: 10, star: 50, gem: 100 };
     this.score += points[itemType] || 0;
     
-    const emitter = this.particles.createEmitter({
-      x: itemSprite.x,
-      y: itemSprite.y,
+    // Crear partículas usando la sintaxis correcta de Phaser 3
+    const particles = this.add.particles(itemSprite.x, itemSprite.y, 'particle', {
       speed: { min: 100, max: 200 },
       angle: { min: 0, max: 360 },
       scale: { start: 1, end: 0 },
@@ -404,8 +394,12 @@ class Game extends Phaser.Scene {
       quantity: 10
     });
     
-    emitter.explode();
+    // Destruir el emisor después de que termine
+    this.time.delayedCall(700, () => {
+      particles.destroy();
+    });
     
+    // Efecto visual del objeto
     this.tweens.add({
       targets: itemSprite,
       alpha: 0,
@@ -415,10 +409,10 @@ class Game extends Phaser.Scene {
       ease: 'Back.easeIn',
       onComplete: () => {
         itemSprite.destroy();
-        emitter.stop();
       }
     });
     
+    // Texto flotante
     const pointsText = this.add.text(itemSprite.x, itemSprite.y, `+${points[itemType]}`, {
       fontSize: '24px',
       fill: '#FFD700',
@@ -497,12 +491,16 @@ class Game extends Phaser.Scene {
     }).setOrigin(0.5, 0.5).setDepth(100);
     
     this.time.delayedCall(5000, () => {
-      this.tweens.add({
-        targets: this.instructionsText,
-        alpha: 0,
-        duration: 1000,
-        onComplete: () => this.instructionsText.destroy()
-      });
+      if (this.instructionsText && this.instructionsText.active) {
+        this.tweens.add({
+          targets: this.instructionsText,
+          alpha: 0,
+          duration: 1000,
+          onComplete: () => {
+            if (this.instructionsText) this.instructionsText.destroy();
+          }
+        });
+      }
     });
     
     this.updateUI();
@@ -575,16 +573,18 @@ class Game extends Phaser.Scene {
       this.playerSprite.setTexture('player_jump');
       this.playerSprite.isJumping = true;
       
-      const jumpEmitter = this.particles.createEmitter({
-        x: this.playerSprite.x,
-        y: this.playerSprite.y + 25,
+      // Partículas de salto
+      const jumpParticles = this.add.particles(this.playerSprite.x, this.playerSprite.y + 25, 'particle', {
         speed: { min: 50, max: 100 },
         angle: { min: 60, max: 120 },
         scale: { start: 0.5, end: 0 },
         lifespan: 400,
         quantity: 5
       });
-      jumpEmitter.explode();
+      
+      this.time.delayedCall(500, () => {
+        jumpParticles.destroy();
+      });
     }
     
     if (this.playerSprite.body.touching.down && this.playerSprite.isJumping) {
